@@ -1,7 +1,4 @@
 # Was about that old in that movie
 Is a userscript that works on IMDb movies pages, hovering actors avatars would show how old they were when that movie was released
 
-<img src="/example.gif"/>
-![](https://i.imgur.com/sdXDp1f.gif))
-
-<img src="/example.gif" alt="drawing" width="216" height="376"/>
+<img src="https://raw.githubusercontent.com/FlowerForWar/Was-About-That-Old-In-That-Movie/main/example.gif"/>
