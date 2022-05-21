@@ -6,6 +6,6 @@ A userscript that works on IMDb movies pages, hovering actors avatars would show
 <img src="https://raw.githubusercontent.com/FlowerForWar/was-about-that-old-in-that-movie/main/example.gif"/>
 
 # Changelog
-## 0.02 (22-05-21)
+### 0.02 (22-05-21)
 * Show actor's zodiac sign
 * Highlight dead actors
