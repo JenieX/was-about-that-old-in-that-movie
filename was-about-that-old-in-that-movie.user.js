@@ -2,11 +2,19 @@
 // @name           Was about that old in that movie
 // @namespace      https://github.com/FlowerForWar/was-about-that-old-in-that-movie
 // @description    IMDb movies - hovering actors avatars would show how old they were when that movie was released
-// @version        0.02
+// @version        0.03
 // @author         FlowrForWar
 // @include        /https:\/\/www\.imdb\.com\/title\/tt\d+\/($|\?.+)/
-// @grant          none
-// @compatible     edge Violentmonkey
+// @grant          GM.getValue
+// @grant          GM.setValue
+// @grant          GM.listValues
+// @grant          GM_getValue
+// @grant          GM_setValue
+// @grant          GM_listValues
+// @compatible     edge Tampermonkey or Violentmonkey
+// @compatible     firefox Greasemonkey, Tampermonkey or Violentmonkey
+// @compatible     chrome Tampermonkey or Violentmonkey
+// @compatible     opera Tampermonkey or Violentmonkey
 // @supportURL     https://github.com/FlowerForWar/was-about-that-old-in-that-movie
 // @license        MIT
 // ==/UserScript==
@@ -20,6 +28,10 @@
 		return;
 	}
 
+	let zodiac_signs_disabled = await getStorageValue('zodiac-signs-disabled');
+	// console.log(await getStorageKeys());
+	// console.log('zodiac-signs-disabled: ', zodiac_signs_disabled);
+
 	const response = await fetch(location.origin + location.pathname + 'releaseinfo');
 	const responseText = await response.text();
 
@@ -30,8 +42,9 @@
 	if (!releaseDates.length) return void alert('No valid release date');
 
 	const movieFirstRelease = releaseDates.sort((first, second) => Date.parse(first) - Date.parse(second))[0];
+	console.log(`Movie first release: ${movieFirstRelease}`);
 
-	const avatarSelector = 'section.ipc-page-section.ipc-page-section--base[cel_widget_id="StaticFeature_Cast"] .ipc-lockup-overlay__screen';
+	const avatarSelector = 'section.ipc-page-section.ipc-page-section--base[cel_widget_id="StaticFeature_Cast"] .ipc-lockup-overlay';
 	const avatarsNodes = [...document.querySelectorAll(avatarSelector)];
 	for (let index = 0; index < avatarsNodes.length; index++) {
 		const avatarsNode = avatarsNodes[index];
@@ -69,7 +82,7 @@
 
 		const [, month, day] = actorBirthDate.split('-').map(string => Number(string));
 		if (actorDeathDate) span.style.setProperty('color', 'crimson', 'important');
-		span.innerHTML = `Was about ${actorInfo['age-when-the-movie-first-released']} years old <br>(${getZodiacSign(month, day)})`;
+		span.innerHTML = `Was about ${actorInfo['age-when-the-movie-first-released']} years old` + (zodiac_signs_disabled ? '' : ` <br>(${getZodiacSign(month, day)})`);
 
 		if (actorDeathDate) {
 			a.setAttribute('title', `${actorInfo.name}, died at the age of ${actorInfo['age-at-death']}`);
@@ -82,57 +95,88 @@
 
 	function getZodiacSign(month, day) {
 		let sign;
-		// let sign_Symbol;
+		// let sign_symbol;
 		switch (!0) {
 			case (month == 3 && day >= 21) || (month === 4 && day <= 19):
 				sign = 'Aries';
-				// sign_Symbol = '♈︎';
+				// sign_symbol = '♈︎';
 				break;
 			case (month == 4 && day >= 20) || (month === 5 && day <= 20):
 				sign = 'Taurus';
-				// sign_Symbol = '♉︎';
+				// sign_symbol = '♉︎';
 				break;
 			case (month == 5 && day >= 21) || (month === 6 && day <= 20):
 				sign = 'Gemini';
-				// sign_Symbol = '♊︎';
+				// sign_symbol = '♊︎';
 				break;
 			case (month == 6 && day >= 21) || (month === 7 && day <= 22):
 				sign = 'Cancer';
-				// sign_Symbol = '♋︎';
+				// sign_symbol = '♋︎';
 				break;
 			case (month == 7 && day >= 23) || (month === 8 && day <= 22):
 				sign = 'Leo';
-				// sign_Symbol = '♌︎';
+				// sign_symbol = '♌︎';
 				break;
 			case (month == 8 && day >= 23) || (month === 9 && day <= 22):
 				sign = 'Virgo';
-				// sign_Symbol = '♍︎';
+				// sign_symbol = '♍︎';
 				break;
 			case (month == 9 && day >= 23) || (month === 10 && day <= 22):
 				sign = 'Libra';
-				// sign_Symbol = '♎︎';
+				// sign_symbol = '♎︎';
 				break;
 			case (month == 10 && day >= 23) || (month === 11 && day <= 21):
 				sign = 'Scorpio';
-				// sign_Symbol = '♏︎';
+				// sign_symbol = '♏︎';
 				break;
 			case (month == 11 && day >= 22) || (month === 12 && day <= 21):
 				sign = 'Sagittarius';
-				// sign_Symbol = '♐︎';
+				// sign_symbol = '♐︎';
 				break;
 			case (month == 12 && day >= 22) || (month === 1 && day <= 19):
 				sign = 'Capricorn';
-				// sign_Symbol = '♑︎';
+				// sign_symbol = '♑︎';
 				break;
 			case (month == 1 && day >= 20) || (month === 2 && day <= 18):
 				sign = 'Aquarius';
-				// sign_Symbol = '♒︎';
+				// sign_symbol = '♒︎';
 				break;
 			case (month == 2 && day >= 19) || (month === 3 && day <= 20):
 				sign = 'Pisces';
-				// sign_Symbol = '♓︎';
+				// sign_symbol = '♓︎';
 				break;
 		}
 		return sign;
 	}
+
+	async function setStorageValue(key, value) {
+		await (typeof GM !== 'undefined' ? GM.setValue : GM_setValue)(key, value);
+	}
+	async function getStorageValue(key) {
+		return (await (typeof GM !== 'undefined' ? GM.getValue : GM_getValue)(key)) || !1;
+	}
+	/* async function getStorageKeys() {
+		return await (typeof GM !== 'undefined' ? GM.listValues : GM_listValues)();
+	} */
+
+	window.addEventListener('keydown', async ({ key, shiftKey, altKey }) => {
+		if (!(key === 'O' && shiftKey && altKey)) return;
+
+		let dialog_confirmation;
+		const zodiac_signs_disabled_fresh = await getStorageValue('zodiac-signs-disabled');
+		if (zodiac_signs_disabled_fresh === !1) {
+			dialog_confirmation = confirm('User script  |  was about that old in that movie\n\nDisable zodiac signs?');
+			if (dialog_confirmation) {
+				await setStorageValue('zodiac-signs-disabled', !0);
+				zodiac_signs_disabled = !0;
+			}
+		} else {
+			dialog_confirmation = confirm('User script  |  was about that old in that movie\n\nEnable zodiac signs?');
+			if (dialog_confirmation) {
+				await setStorageValue('zodiac-signs-disabled', !1);
+				zodiac_signs_disabled = !1;
+			}
+		}
+		// alert(`New options will be applied next time you open the page\n\nzodiac_signs_disabled: ${await getStorageValue('zodiac-signs-disabled')}`);
+	});
 })();
