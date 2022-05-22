@@ -1,5 +1,6 @@
 # Was about that old in that movie
-A userscript that works on IMDb movies pages, hovering actors avatars would show how old they were when that movie was released.
+A userscript that works on IMDb movies pages, hovering actors avatars would show how old they were when that movie was released.  
+Also, by default, it would show the zodiac signs for actors, `shift+alt+o` to toggle that.
 
 [Github](https://github.com/FlowerForWar/was-about-that-old-in-that-movie), [Greasy Fork](https://greasyfork.org/en/scripts/445300-was-about-that-old-in-that-movie)
 
