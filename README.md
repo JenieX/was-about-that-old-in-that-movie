@@ -5,6 +5,7 @@ Also, by default, it would show the zodiac signs for actors, `shift+alt+o` to to
 [Github](https://github.com/FlowerForWar/was-about-that-old-in-that-movie), [Greasy Fork](https://greasyfork.org/en/scripts/445300-was-about-that-old-in-that-movie)
 
 <img src="https://raw.githubusercontent.com/FlowerForWar/was-about-that-old-in-that-movie/main/example.gif"/>
+<img src="https://raw.githubusercontent.com/FlowerForWar/was-about-that-old-in-that-movie/main/example-2.gif"/>
 
 # Changelog
 ### 0.02 (22-05-21)
