@@ -8,10 +8,17 @@ Also, by default, it would show the zodiac signs for actors, `shift+alt+o` to to
 <img src="https://raw.githubusercontent.com/FlowerForWar/was-about-that-old-in-that-movie/main/example-2.gif"/>
 
 # Changelog
-### 0.02 (22-05-21)
-* Show actor's zodiac sign
-* Highlight dead actors
+### 0.04 (22-06-04)
+* Fix checking for TV Series condition, thank to [Procyon-b](https://github.com/FlowerForWar/was-about-that-old-in-that-movie/issues/1)
+* Fix wrong age when birth day/month equals zero
+* Add support for movies on actors pages, see the second gif
+* Show the age of the actors in thier pages, and zodiac signs if enabled
+* Replace "was" with "Will be" when the movie has not been released
 
 ### 0.03 (22-05-22)
 * Add a shotcut to toggle zodiac signs (shift+alt+o), zodiac signs are enabled by default
 * Fix to support [Achernar](https://greasyfork.org/en/users/435938-achernar)'s [userstyle](https://userstyles.world/style/852/imdb-fix-title-page)
+
+### 0.02 (22-05-21)
+* Show actor's zodiac sign
+* Highlight dead actors
