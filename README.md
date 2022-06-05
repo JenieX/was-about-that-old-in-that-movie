@@ -1,16 +1,19 @@
 # Was about that old in that movie
 [Github](https://github.com/FlowerForWar/was-about-that-old-in-that-movie), [Greasy Fork](https://greasyfork.org/en/scripts/445300-was-about-that-old-in-that-movie)
 
-A user script that works on IMDb movies and actors pages, to show how old they were when that movie was released.
-Also, by default, it would show the zodiac signs for actors, `shift+alt+o` to toggle that.
-
+A user script that works on IMDb movies and actors pages, to show how old actors were when that movie was released.  
+By default, it would show the zodiac signs for actors as well, `shift+alt+o` to toggle that, ON or OFF.
 
 ## Preview
-#### Hovering actors avatars on a movie page
+#### 1. Hovering actors avatars on a movie page
 <img src="https://raw.githubusercontent.com/FlowerForWar/was-about-that-old-in-that-movie/main/example.gif"/>
 
-#### Hovering the movie year on an actor page
+#### 2. Hovering the movie year on an actor page
 <img src="https://raw.githubusercontent.com/FlowerForWar/was-about-that-old-in-that-movie/main/example-2.gif"/>
+
+
+## Contributors
+* [Procyon-b](https://github.com/Procyon-b)
 
 ## Changelog
 #### 0.05 (22-06-05)
@@ -33,3 +36,6 @@ Also, by default, it would show the zodiac signs for actors, `shift+alt+o` to to
 #### 0.02 (22-05-21)
 * Show actor's zodiac sign
 * Highlight dead actors
+
+## License
+[MIT](https://github.com/FlowerForWar/was-about-that-old-in-that-movie/blob/main/LICENSE)
