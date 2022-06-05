@@ -2,7 +2,7 @@
 // @name           Was about that old in that movie
 // @namespace      https://github.com/FlowerForWar/was-about-that-old-in-that-movie
 // @description    IMDb movies - hovering actors avatars would show how old they were when that movie was released
-// @version        0.04
+// @version        0.05
 // @author         FlowrForWar
 // @include        /https:\/\/www\.imdb\.com\/title\/tt\d+\/($|\?.+)/
 // @include        /https:\/\/www\.imdb\.com\/name\/nm\d+\/($|\?.+|#.+)/
@@ -20,7 +20,7 @@
 // @license        MIT
 // ==/UserScript==
 
-// Gifs showing an example
+// Gifs showing examples
 // https://raw.githubusercontent.com/FlowerForWar/was-about-that-old-in-that-movie/main/example.gif
 // https://raw.githubusercontent.com/FlowerForWar/was-about-that-old-in-that-movie/main/example-2.gif
 
@@ -34,7 +34,6 @@ let globalActorBirthDate;
 	zodiac_signs_disabled = (await getStorageValue('zodiac-signs-disabled')) || !1;
 
 	if (location.href.startsWith('https://www.imdb.com/name/nm')) {
-		// alert('Actor page!');
 		const timeTag = document.querySelector('#name-born-info > time[datetime]');
 		if (!timeTag || !/^\d{4}-\d{1,2}-\d{1,2}$/.test(timeTag.dateTime)) {
 			// alert('No birth date available');
@@ -48,7 +47,7 @@ let globalActorBirthDate;
 		}
 
 		globalActorBirthDate = timeTag.dateTime;
-		const age = Math.floor((new Date() - new Date(timeTag.dateTime)) / 31536000000);
+		const age = Math.floor((new Date() - new Date(globalActorBirthDate)) / 31536000000);
 		const dead = !!document.getElementById('name-death-info');
 		if (zodiac_signs_disabled && dead) return;
 		const age_sign_string = [
@@ -75,10 +74,12 @@ let globalActorBirthDate;
 		return;
 	}
 
-	if (document.querySelector('.ipc-inline-list.ipc-inline-list--show-dividers[data-testid="hero-title-block__metadata"]').textContent.startsWith('TV')) {
+	/* if (document.querySelector('.ipc-inline-list.ipc-inline-list--show-dividers[data-testid="hero-title-block__metadata"]').textContent.startsWith('TV')) {
 		// alert('TV Series are not supported!');
 		return;
-	}
+	} */
+	if (/\((TV|Podcast|Music|Video|Short) /.test(document.title)) return;
+	// Short || TV Short | Video Game | Video | Music Video | TV Series | Podcast Series | TV Mini Series
 
 	const releaseDates = await getMovieReleaseDates(location.origin, location.pathname);
 	if (!releaseDates.length) return void alert('No valid release date');
@@ -95,21 +96,25 @@ let globalActorBirthDate;
 })();
 
 async function moviesNodesHandler() {
+	let cursor_under_element = !0;
 	this.removeEventListener('mouseenter', moviesNodesHandler);
 	const aElement = this.closest('.filmo-row').querySelector('a[href^="/title/"]');
 	const movie = aElement.textContent;
-	aElement.textContent += '..';
+	this.addEventListener('mouseleave', function() {
+		aElement.textContent = movie;
+		cursor_under_element = !1;
+	});
+	// aElement.textContent += '..';
 
 	const { origin, pathname } = new URL(aElement.href);
 	const releaseDates = await getMovieReleaseDates(origin, pathname);
 
 	if (!releaseDates.length) {
 		aElement.textContent = movie;
-		this.setAttribute('title', 'No valid release date | or a TV series');
+		this.setAttribute('title', 'No valid release date | or not supported');
 		return;
 	}
 	movieFirstRelease = releaseDates.sort((first, second) => Date.parse(first) - Date.parse(second))[0];
-	this.setAttribute('title', movieFirstRelease);
 
 	const info = {
 		// movie: this.textContent,
@@ -118,15 +123,27 @@ async function moviesNodesHandler() {
 		'movie-is-not-released': new Date() - new Date(movieFirstRelease) < 0,
 	};
 
-	aElement.textContent = `${movie} (${info['movie-is-not-released'] ? 'will be' : 'was'} about ${info['age-when-the-movie-first-released']} years old)`;
-	const hover_string = aElement.textContent;
-	const autoHide = setTimeout(() => (aElement.textContent = movie), 5000);
+	const deathElement = document.querySelector('#name-death-info > time[datetime]');
+	const yearElementTitle = [
+		//
+		movieFirstRelease,
+		!deathElement && `\n\nNow, ${info.name} is ${Math.floor((new Date() - new Date(globalActorBirthDate)) / 31536000000)} years old`,
+		deathElement && `\n\n${info.name}, died at the age of ${Math.floor((new Date(deathElement.dateTime) - new Date(globalActorBirthDate)) / 31536000000)}`,
+	]
+		.filter(Boolean)
+		.join('');
+	this.setAttribute('title', yearElementTitle);
 
-	this.addEventListener('mouseenter', () => {
-		clearTimeout(autoHide);
+	const hover_string = `${movie} (${info['movie-is-not-released'] ? 'will be' : 'was'} about ${info['age-when-the-movie-first-released']} years old)`;
+	if (cursor_under_element) {
+		aElement.textContent = hover_string;
+	}
+	// const autoHide = setTimeout(() => (aElement.textContent = movie), 5000);
+
+	this.addEventListener('mouseenter', function() {
+		// clearTimeout(autoHide);
 		aElement.textContent = hover_string;
 	});
-	this.addEventListener('mouseleave', () => (aElement.textContent = movie));
 }
 
 async function avatarsNodesHandler() {
@@ -140,7 +157,7 @@ async function avatarsNodesHandler() {
 	a.appendChild(span);
 	siblingElement.appendChild(a);
 
-	const response = await fetch(siblingElement.firstElementChild.href);
+	const response = await fetch(siblingElement.firstElementChild.href.split('?')[0].replace(/\/$/, '') + '/bio');
 	const responseText = await response.text();
 	const actorDates = [];
 	responseText.replace(/datetime="(\d{4}-\d{1,2}-\d{1,2})"/g, (match, date) => actorDates.push(date));
@@ -186,7 +203,7 @@ async function avatarsNodesHandler() {
 async function getMovieReleaseDates(origin, pathname) {
 	const response = await fetch(origin + pathname + 'releaseinfo');
 	const responseText = await response.text();
-	const TV_Series = /<title>.+?TV (Mini )?Series.+?<\/title>/.test(responseText);
+	const TV_Series = /<title>.+?\((TV|Podcast|Music|Video|Short) .+?<\/title>/.test(responseText);
 	// alert(TV_Series);
 	if (TV_Series) return [];
 
