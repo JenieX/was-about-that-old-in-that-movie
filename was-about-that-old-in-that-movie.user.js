@@ -2,7 +2,7 @@
 // @name           Was about that old in that movie
 // @namespace      https://github.com/FlowerForWar/was-about-that-old-in-that-movie
 // @description    IMDb movies - hovering actors avatars would show how old they were when that movie was released
-// @version        0.05
+// @version        0.06
 // @author         FlowrForWar
 // @include        /https:\/\/www\.imdb\.com\/title\/tt\d+\/($|\?.+)/
 // @include        /https:\/\/www\.imdb\.com\/name\/nm\d+\/($|\?.+|#.+)/
@@ -87,11 +87,14 @@ let globalActorBirthDate;
   movieFirstRelease = releaseDates.sort((first, second) => Date.parse(first) - Date.parse(second))[0];
   console.log(`Movie first release: ${movieFirstRelease}`);
 
-  const avatarSelector = 'section.ipc-page-section.ipc-page-section--base[cel_widget_id="StaticFeature_Cast"] .ipc-lockup-overlay';
-  const avatarsNodes = [...document.querySelectorAll(avatarSelector)];
+  // const avatarSelector = 'section.ipc-page-section.ipc-page-section--base[cel_widget_id="StaticFeature_Cast"] .ipc-lockup-overlay';
+  const avatarSelector = 'section.ipc-page-section.ipc-page-section--base[cel_widget_id="StaticFeature_Cast"] div[data-testid="title-cast-item"]';
+  // const avatarsNodes = [...document.querySelectorAll(avatarSelector)];
+  const avatarsNodes = document.querySelectorAll(avatarSelector);
   for (let index = 0; index < avatarsNodes.length; index++) {
-    const avatarsNode = avatarsNodes[index];
+    const [avatarsNode, nameNode] = [...avatarsNodes[index].querySelectorAll('a[href^="/name/"]')];
     avatarsNode.addEventListener('mouseenter', avatarsNodesHandler);
+    nameNode.addEventListener('mouseenter', avatarsNodesHandler);
   }
 })();
 
@@ -148,10 +151,19 @@ async function moviesNodesHandler() {
 
 async function avatarsNodesHandler() {
   this.removeEventListener('mouseenter', avatarsNodesHandler);
-  const siblingElement = this.closest('div[data-testid="title-cast-item"]').lastChild;
+
+  const parentNode = this.closest('div[data-testid="title-cast-item"]');
+  if (parentNode.dataset.processed) {
+    return;
+  }
+
+  parentNode.dataset.processed = !0;
+
+  const siblingElement = parentNode.lastChild;
 
   const a = document.createElement('a');
   a.setAttribute('class', 'title-cast-item__eps-toggle');
+  a.style.setProperty('cursor', 'default');
   const span = document.createElement('span');
   span.innerHTML = 'Loading data..';
   a.appendChild(span);
@@ -194,9 +206,11 @@ async function avatarsNodesHandler() {
   if (actorDeathDate) {
     a.setAttribute('title', `${actorInfo.name}, died at the age of ${actorInfo['age-at-death']}`);
     this.setAttribute('title', `${actorInfo.name}, died at the age of ${actorInfo['age-at-death']}`);
+    parentNode.querySelector('a[href^="/name/"]:not([title])')?.setAttribute('title', `${actorInfo.name}, died at the age of ${actorInfo['age-at-death']}`);
   } else {
     a.setAttribute('title', `Now, ${actorInfo.name} is ${actorInfo['age-now']} years old`);
     this.setAttribute('title', `Now, ${actorInfo.name} is ${actorInfo['age-now']} years old`);
+    parentNode.querySelector('a[href^="/name/"]:not([title])')?.setAttribute('title', `Now, ${actorInfo.name} is ${actorInfo['age-now']} years old`);
   }
 }
 
