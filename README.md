@@ -21,6 +21,10 @@ By default, it would show the zodiac signs for actors as well, `shift+alt+o` to 
 
 ## Changelog
 
+#### 0.06 (22-09-30)
+
+- In a movie page, now hovering the name of the actor would trigger the retrieval of data, just like hovering the avatar
+
 #### 0.05 (22-06-05)
 
 - Prevent the addition of movies in the "Recently Viewed" list, when fetching data, thanks to [Procyon-b](https://github.com/FlowerForWar/was-about-that-old-in-that-movie/issues/3)
