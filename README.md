@@ -21,6 +21,10 @@ By default, it would show the zodiac signs for actors as well, `shift+alt+o` to 
 
 ## Changelog
 
+#### 0.07 (22-10-07)
+
+- Fix few bugs
+
 #### 0.06 (22-09-30)
 
 - In a movie page, now hovering the name of the actor would trigger the retrieval of data, just like hovering the avatar
