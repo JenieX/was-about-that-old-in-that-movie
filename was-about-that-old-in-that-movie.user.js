@@ -2,7 +2,7 @@
 // @name           Was about that old in that movie
 // @namespace      https://github.com/FlowerForWar/was-about-that-old-in-that-movie
 // @description    IMDb movies - hovering actors avatars would show how old they were when that movie was released
-// @version        0.07
+// @version        0.08
 // @author         FlowrForWar
 // @include        /https:\/\/www\.imdb\.com\/title\/tt\d+\/($|\?.+)/
 // @include        /https:\/\/www\.imdb\.com\/name\/nm\d+\/($|\?.+|#.+)/
@@ -63,6 +63,25 @@ let globalActorBirthDate;
       movieNode.style.setProperty('cursor', 'default', 'important');
       movieNode.addEventListener('mouseenter', moviesNodesHandler);
     }
+
+    const age = Math.floor((new Date() - new Date(globalActorBirthDate)) / 31536000000);
+    const dead = !!document.getElementById('name-death-info');
+    if (zodiac_signs_disabled && dead) {
+      return;
+    }
+    const age_sign_string = [
+      //
+      '(',
+      !dead && `age ${age}`,
+      !dead && !zodiac_signs_disabled && ', ',
+      !zodiac_signs_disabled && getZodiacSign(month, day),
+      ')',
+    ]
+      .filter(Boolean)
+      .join('');
+    timeTag.insertAdjacentText('afterend', age_sign_string);
+    // timeTag.insertAdjacentText('afterend', '(' + (!dead ? `age ${age}, ` : '') + tropicalZodiac(month, day) + ')');
+
     return;
   }
 
