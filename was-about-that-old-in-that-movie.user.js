@@ -2,7 +2,7 @@
 // @name           Was about that old in that movie
 // @namespace      https://github.com/FlowerForWar/was-about-that-old-in-that-movie
 // @description    IMDb movies - hovering actors avatars would show how old they were when that movie was released
-// @version        0.06
+// @version        0.07
 // @author         FlowrForWar
 // @include        /https:\/\/www\.imdb\.com\/title\/tt\d+\/($|\?.+)/
 // @include        /https:\/\/www\.imdb\.com\/name\/nm\d+\/($|\?.+|#.+)/
@@ -63,7 +63,14 @@ let globalActorBirthDate;
     timeTag.insertAdjacentText('afterend', age_sign_string);
     // timeTag.insertAdjacentText('afterend', '(' + (!dead ? `age ${age}, ` : '') + tropicalZodiac(month, day) + ')');
 
-    const moviesNodes = [...(document.getElementById('filmo-head-actor') || document.getElementById('filmo-head-actress')).nextElementSibling.querySelectorAll('.filmo-row')].map((element) => {
+    const moviesNodes = [
+      ...(
+        document.getElementById('filmo-head-actor') ||
+        document.getElementById('filmo-head-actorMovie') ||
+        document.getElementById('filmo-head-actress') ||
+        document.getElementById('filmo-head-actressMovie')
+      ).nextElementSibling.querySelectorAll('.filmo-row'),
+    ].map((element) => {
       return element.querySelector('span.year_column');
     });
     for (let index = 0; index < moviesNodes.length; index++) {
@@ -92,7 +99,7 @@ let globalActorBirthDate;
   // const avatarsNodes = [...document.querySelectorAll(avatarSelector)];
   const avatarsNodes = document.querySelectorAll(avatarSelector);
   for (let index = 0; index < avatarsNodes.length; index++) {
-    const [avatarsNode, nameNode] = [...avatarsNodes[index].querySelectorAll('a[href^="/name/"]')];
+    const [avatarsNode, nameNode] = [...avatarsNodes[index].querySelectorAll('a[href*="/name/"]')];
     avatarsNode.addEventListener('mouseenter', avatarsNodesHandler);
     nameNode.addEventListener('mouseenter', avatarsNodesHandler);
   }
@@ -101,7 +108,7 @@ let globalActorBirthDate;
 async function moviesNodesHandler() {
   let cursor_under_element = !0;
   this.removeEventListener('mouseenter', moviesNodesHandler);
-  const aElement = this.closest('.filmo-row').querySelector('a[href^="/title/"]');
+  const aElement = this.closest('.filmo-row').querySelector('a[href*="/title/"]');
   const movie = aElement.textContent;
   this.addEventListener('mouseleave', function () {
     aElement.textContent = movie;
@@ -206,11 +213,11 @@ async function avatarsNodesHandler() {
   if (actorDeathDate) {
     a.setAttribute('title', `${actorInfo.name}, died at the age of ${actorInfo['age-at-death']}`);
     this.setAttribute('title', `${actorInfo.name}, died at the age of ${actorInfo['age-at-death']}`);
-    parentNode.querySelector('a[href^="/name/"]:not([title])')?.setAttribute('title', `${actorInfo.name}, died at the age of ${actorInfo['age-at-death']}`);
+    parentNode.querySelector('a[href*="/name/"]:not([title])').setAttribute('title', `${actorInfo.name}, died at the age of ${actorInfo['age-at-death']}`);
   } else {
     a.setAttribute('title', `Now, ${actorInfo.name} is ${actorInfo['age-now']} years old`);
     this.setAttribute('title', `Now, ${actorInfo.name} is ${actorInfo['age-now']} years old`);
-    parentNode.querySelector('a[href^="/name/"]:not([title])')?.setAttribute('title', `Now, ${actorInfo.name} is ${actorInfo['age-now']} years old`);
+    parentNode.querySelector('a[href*="/name/"]:not([title])').setAttribute('title', `Now, ${actorInfo.name} is ${actorInfo['age-now']} years old`);
   }
 }
 
