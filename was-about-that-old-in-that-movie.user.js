@@ -47,21 +47,6 @@ let globalActorBirthDate;
     }
 
     globalActorBirthDate = timeTag.dateTime;
-    const age = Math.floor((new Date() - new Date(globalActorBirthDate)) / 31536000000);
-    const dead = !!document.getElementById('name-death-info');
-    if (zodiac_signs_disabled && dead) return;
-    const age_sign_string = [
-      //
-      '(',
-      !dead && `age ${age}`,
-      !dead && !zodiac_signs_disabled && ', ',
-      !zodiac_signs_disabled && getZodiacSign(month, day),
-      ')',
-    ]
-      .filter(Boolean)
-      .join('');
-    timeTag.insertAdjacentText('afterend', age_sign_string);
-    // timeTag.insertAdjacentText('afterend', '(' + (!dead ? `age ${age}, ` : '') + tropicalZodiac(month, day) + ')');
 
     const moviesNodes = [
       ...(
