@@ -21,6 +21,10 @@ By default, it would show the zodiac signs for actors as well, `shift+alt+o` to 
 
 ## Changelog
 
+#### 0.08 (22-10-08)
+
+- Fix a bug where on dead actors, the script wouldn't work if zodiac sign option is disabled
+
 #### 0.07 (22-10-07)
 
 - Fix few bugs
