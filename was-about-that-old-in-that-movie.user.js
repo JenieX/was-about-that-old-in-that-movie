@@ -2,7 +2,7 @@
 // @name           Was about that old in that movie
 // @namespace      https://github.com/FlowerForWar/was-about-that-old-in-that-movie
 // @description    IMDb movies - hovering actors avatars would show how old they were when that movie was released
-// @version        0.08
+// @version        0.09
 // @author         FlowrForWar
 // @include        /https:\/\/www\.imdb\.com\/title\/tt\d+\/($|\?.+)/
 // @include        /https:\/\/www\.imdb\.com\/name\/nm\d+\/($|\?.+|#.+)/
@@ -89,7 +89,7 @@ let globalActorBirthDate;
 		// alert('TV Series are not supported!');
 		return;
 	} */
-  if (/\((TV|Podcast|Music|Video|Short) /.test(document.title)) return;
+  if (/\((TV|Podcast|Music|Video|Short) /.test(document.title) && !document.title.includes('Movie')) return;
   // Short || TV Short | Video Game | Video | Music Video | TV Series | Podcast Series | TV Mini Series
 
   const releaseDates = await getMovieReleaseDates(location.origin, location.pathname);
@@ -226,11 +226,22 @@ async function avatarsNodesHandler() {
 }
 
 async function getMovieReleaseDates(origin, pathname) {
+  // releaseinfo page document title may not match that of the original
+  // example https://www.imdb.com/title/tt2205529/releaseinfo and https://www.imdb.com/title/tt2205529/
+  // So will get the document's title frome the original page first
+  // const originalResponse = await fetch(origin + pathname);
+  // const originalResponseText = await originalResponse.text();
+
   const response = await fetch(origin + pathname + 'releaseinfo');
   const responseText = await response.text();
-  const TV_Series = /<title>.+?\((TV|Podcast|Music|Video|Short) .+?<\/title>/.test(responseText);
+
+  // view-source:https://www.imdb.com/title/tt2205529/ 's title needs decoding
+  const documentTitle = htmlDecode(responseText.match(/<title>(.+?)<\/title>/)[1]);
+  // alert(documentTitle);
+  // const TV_Series = /<title>.+?\((TV|Podcast|Music|Video|Short) .+?<\/title>/.test(responseText);
   // alert(TV_Series);
-  if (TV_Series) return [];
+  // if (TV_Series) return [];
+  if (/\((TV|Podcast|Music|Video|Short) /.test(documentTitle) && !documentTitle.includes('Movie')) return [];
 
   const regex = /class="release-date-item__date" align="right">(\d{1,2} [a-zA-Z0-9_]+ \d{4})<\/td>/g;
   const releaseDates = [];
@@ -325,3 +336,9 @@ window.addEventListener('keydown', async ({ key, shiftKey, altKey }) => {
   }
   // alert(`New options will be applied next time you open the page\n\nzodiac_signs_disabled: ${await getStorageValue('zodiac-signs-disabled')}`);
 });
+
+// https://stackoverflow.com/questions/1912501/unescape-html-entities-in-javascript/34064434#34064434
+function htmlDecode(input) {
+  var doc = new DOMParser().parseFromString(input, 'text/html');
+  return doc.documentElement.textContent;
+}
