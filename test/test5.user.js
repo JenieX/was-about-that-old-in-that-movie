@@ -21,7 +21,7 @@
 // ==/UserScript==
 
 // Gifs showing examples
-// https://raw.githubusercontent.com/FlowerForWar/was-about-that-old-in-that-movie/main/example.gif
+// https://thumbs4.redgifs.com/NavyDistinctZigzagsalamander.mp4?expires=1666425600&signature=b306a1fbf6fdef99cea6449310d5ec6667e45d59bb6acb976bd849bdfa210774&for=74.82.60.27
 // https://raw.githubusercontent.com/FlowerForWar/was-about-that-old-in-that-movie/main/example-2.gif
 
 let zodiac_signs_disabled;
