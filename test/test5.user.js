@@ -27,7 +27,7 @@
 let zodiac_signs_disabled;
 let movieFirstRelease;
 let globalActorBirthDate;
-// console.log(await getStorageKeys());
+// console.log(await getStorageKeys()); 
 // console.log('zodiac-signs-disabled: ', zodiac_signs_disabled);
 
 (async function () {
